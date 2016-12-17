@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="telephone=no" name="format-detection">
+<meta charset="utf-8">
+<title>新闻发布系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0">
+<link rel="stylesheet" href="./styles/bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="./styles/app.css" type="text/css" />
+<link rel="stylesheet" href="./styles/font-awesome.min.css" type="text/css" />
+<link rel="stylesheet" href="./styles/weui.min.css" type="text/css" />
+</head>
+<body>
+
+	<div class="container w-xxl w-auto-xs" style="padding-top: 30px;">
+		<a href="" class="navbar-brand block m-t ng-binding">登陆</a>
+		<div class="m-b-lg">
+			<div class="wrapper text-center">
+				<strong>Sign in to get in touch</strong>
+			</div>
+			<form name="form" class="form-validation">
+				<div class="list-group list-group-sm">
+					<div class="list-group-item">
+						<input id="username" type="text" placeholder="Username" class="form-control no-border" required>
+					</div>
+					<div class="list-group-item">
+						<input id="password" type="password" placeholder="Password" class="form-control no-border" required>
+					</div>
+				</div>
+				<button id="submit" type="submit" class="btn btn-lg btn-primary btn-block" onclick="return postData();">登录</button>
+				<div class="text-center m-t m-b">
+					<a>忘记密码？</a>
+				</div>
+				<div class="line line-dashed"></div>
+				<p class="text-center">
+					<small>没有账号吗?</small>
+				</p>
+				<a href="./Signup" class="btn btn-lg btn-default btn-block">注册账号</a>
+			</form>
+		</div>
+		<p style="text-align: center;">
+			<small class="text-muted">Copyright &copy; 2016 Weijiang</small>
+		</p>
+	</div>
+	<script src="./script/zepto.min.js"></script>
+	<script type="text/javascript" src="./script/weui.min.js"></script>
+	<script type="text/javascript">
+		function postData() {
+			var username = $('#username').val().replace(/\s+/g, '');
+			var password = $('#password').val().replace(/\s+/g, '');
+			var reason;
+			//验证表单合法性
+			if (!username) {
+				return;
+			} else if (!password) {
+				return;
+			}
+			var loading = weui.loading('请稍后...');
+			data = {
+				username : username,
+				password : password,
+			};
+			$.post("./Login", data, function(res) {
+				loading.hide();
+				if (res.errmsg === 'ok') {
+					// 提交成功删除文本内容，防止重复提交
+					$('#username').val("")
+					$('#password').val("")
+					window.location.href = "./";
+					return false;
+				} else if (res.errmsg === 'error') {
+					reason = "密码错误，请重试"
+				} else {
+					// 失败，显示后端信息
+					reason = "系统错误";
+				}
+				weui.alert(reason, function() {
+					console.log('ok');
+				}, {
+					title : '错误'
+				});
+			});
+			return false;
+		}
+	</script>
+</body>
+
+</html>
