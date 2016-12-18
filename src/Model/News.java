@@ -22,6 +22,8 @@ public class News extends DBConn {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			if(rs.next()){
+				user_id=rs.getInt("user_id");
+				rs.close();
 			}else{
 				rs.close();
 				return 0;
