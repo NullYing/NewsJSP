@@ -1,3 +1,4 @@
+﻿<%@ page language="java" import="java.util.*,bean.New" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="zh-cn">
 
@@ -31,7 +32,20 @@ body {
 							<h3 class="m-b m-t-sm">
 								<b>新闻发布系统</b>
 							</h3>
+							<%
+								String username = (String) session.getAttribute("username");
+								if (username != null) {
+							%>
+							<a href="./addNews" class="btn btn-sm btn-success btn-rounded">发布新闻</a>
 							<button class="btn btn-sm btn-success btn-rounded" onclick="return Logout();">退出登录</button>
+							<%
+								} else {
+							%>
+							<a href="./Login" class="btn btn-sm btn-success btn-rounded">登录</a> <a href="./Signup"
+								class="btn btn-sm btn-success btn-rounded">注册</a>
+							<%
+								}
+							%>
 						</div>
 					</div>
 				</div>
@@ -40,17 +54,28 @@ body {
 			<!-- navbar -->
 			<div class="wrapper bg-white b-b">
 				<ul id="type" class="nav nav-pills nav-sm">
-					<li class="active"><a href="./">所有新闻</a></li>
+					<li><a href="./">所有新闻</a></li>
 				</ul>
 			</div>
 			<!-- / navbar -->
 			<!-- content -->
 			<div class="panel panel-default" style="padding-bottom: 50px;">
-				<div class="panel-heading font-bold">发表新闻</div>
+				<div class="panel-heading font-bold">编辑新闻</div>
 				<div class="panel-body">
-					<form id='loveform' role="form" action="" method="post">
+					<jsp:useBean id="nesmodel" class="Model.News" />
+					<%
+						int news_id = 0;
+						New OneNew = new New();
+						String s_news_id = (String) request.getParameter("newid");
+						if (s_news_id != null) {
+							news_id = Integer.parseInt(s_news_id);
+							OneNew = nesmodel.getOneNews(news_id);
+						}
+					%>
+					<form role="form" action="" method="post">
 						<div class="form-group">
-							<label>新闻标题</label> <input id='title' maxlength="30" type="text" class="form-control" placeholder="" required />
+							<label>新闻标题</label> <input id='title' maxlength="30" type="text" class="form-control" placeholder=""
+								value="<%=OneNew.getTitle()%>" required />
 						</div>
 						<div class="form-group">
 							<label>新闻内容</label>
@@ -118,7 +143,7 @@ body {
 								</div>
 							</div>
 							<div id="editor" class="form-control" style="overflow:scroll;height:200px;max-height:200px"
-								contenteditable="true"></div>
+								contenteditable="true"><%=OneNew.getContent()%></div>
 							<div class="form-group">
 								<label>新闻分类</label> <select id="listtype" class="form-control">
 								</select>
@@ -148,10 +173,15 @@ body {
 			$.get("./getType", null, function(res) {
 				var list = res.List;
 				for (i = 0; i < list.length; i++) {
-					$('#type').append("<li><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
-					$('#listtype').append("<option value='" + i + "'>" + list[i] + "</option>");
+					if(list[i] == '<%=OneNew.getType()%>'){
+					    $('#type').append("<li class=\"active\"><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
+					    $('#listtype').append("<option selected value='" + i + "'>" + list[i] + "</option>");
+					    }
+					else{
+					    $('#type').append("<li><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
+					    $('#listtype').append("<option value='" + i + "'>" + list[i] + "</option>");
+					    }
 				}
-				$("#listtype ").get(0).selectedIndex = 0;
 			});
 		}
 		initTypeList();
@@ -177,16 +207,14 @@ body {
 			}
 			var loading = weui.loading('请稍后...');
 			data = {
+			    newid : <%=news_id%>,
 				title : title,
 				content : content,
 				type : type,
 			};
-			$.post("#", data, function(res) {
+			$.post("./editNews", data, function(res) {
 				loading.hide();
 				if (res.errmsg === 'ok') {
-					// 提交成功删除文本内容，防止重复提交
-					$('#title').val("")
-					$('#editor').text("")
 					weui.alert(res.reason, function() {
 						console.log('ok');
 					}, {

@@ -7,24 +7,7 @@ public class New {
 	private String summary; // 摘要
 	private String author; // 作者
 	private String type; // 类别
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	private String posttime; // 时间
-
-	public String getSummary() {
-		summary = HtmlToText(content);
-		if (summary.length() > 220) {
-			summary = summary.substring(0, 220);
-			summary = summary + "...";
-		}
-		return summary;
-	}
 
 	public int getId() {
 		return id;
@@ -56,6 +39,23 @@ public class New {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getSummary() {
+		summary = HtmlToText(content);
+		if (summary.length() > 220) {
+			summary = summary.substring(0, 220);
+			summary = summary + "...";
+		}
+		return summary;
 	}
 
 	public String getPosttime() {

@@ -18,6 +18,7 @@ public class Type extends DBConn {
 			while(rs.next()){
 				typeList.add(rs.getString(2));
 			}
+			rs.close();
 			return typeList;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

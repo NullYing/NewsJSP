@@ -14,7 +14,7 @@ public class News extends DBConn {
 		int flag = 0;
 		int user_id = 0;
 		Connection conn = getConn();
-		
+		//´æÔÚsql×¢ÈëÂ©¶´
 		String sql = "select * from account where name=\'"+username + "\'";
 		
 		try {
@@ -22,8 +22,8 @@ public class News extends DBConn {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			if(rs.next()){
-				user_id = rs.getInt("user_id");
 			}else{
+				rs.close();
 				return 0;
 			}
 			
@@ -40,6 +40,25 @@ public class News extends DBConn {
 			pstmt.setString(3, content);
 			pstmt.setInt(4, user_id);
 			flag = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	public int editNews(int newid, String title, String content,int type) {
+		int flag = 0;
+		Connection conn = getConn();
+		String sql = "update news set title=?, content=?, type=? where news_id=?";
+		
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, title);
+			pstmt.setString(2, content);
+			pstmt.setInt(3, type);
+			pstmt.setInt(4, newid);
+			flag = pstmt.executeUpdate();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,6 +93,7 @@ public class News extends DBConn {
 				m.setPosttime(rs.getString("post_time"));
 				list.add(m);
 			}
+			rs.close();
 			return list;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -87,7 +107,7 @@ public class News extends DBConn {
 		New m = new New();
 		Connection conn = getConn();
 		
-		String sql = "select * from news join account on news.user_id=account.user_id where news_id = " + id;
+		String sql = "select news.news_id,news.title,news.content,account.name,type.name as typename,news.post_time from news join account on news.user_id=account.user_id join type on news.type=type.type_id where news_id = " + id;
 		
 		try {
 			java.sql.Statement stmt = conn.createStatement();
@@ -99,8 +119,10 @@ public class News extends DBConn {
 				m.setTitle(rs.getString("title"));
 				m.setContent(rs.getString("content"));
 				m.setAuthor(rs.getString("name"));
+				m.setType(rs.getString("typename"));
 				m.setPosttime(rs.getString("post_time"));
 			}
+			rs.close();
 			return m;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

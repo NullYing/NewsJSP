@@ -52,7 +52,7 @@ public class Login extends HttpServlet {
 		int ret = db.checkUserExist(username);
 		if(ret == 1){
 			ret = db.checkPassword(username, password);
-			if(ret != 1){
+			if(ret == 1){
 				jsonObj.put(jsonKey, "ok");
 				HttpSession session = request.getSession();
 				//不管存不存在，创建session

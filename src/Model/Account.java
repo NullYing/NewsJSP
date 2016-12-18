@@ -36,6 +36,7 @@ public class Account extends DBConn {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			if(rs.next()){
+				rs.close();
 				return 1;
 			}
 			
@@ -47,8 +48,7 @@ public class Account extends DBConn {
 	}
 	public int checkPassword(String name,String password){
 		Connection conn = getConn();
-		String sql = "select * from account where name="+name;
-		
+		String sql = "select * from account where name=\'" + name + "\'";
 		try {
 			java.sql.Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -56,6 +56,7 @@ public class Account extends DBConn {
 			if(rs.next()){
 				String r_password = rs.getString("password");
 				if(r_password.equals(password)){
+					rs.close();
 					return 1;
 				}
 			}

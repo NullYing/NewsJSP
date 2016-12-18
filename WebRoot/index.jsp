@@ -1,5 +1,4 @@
-﻿<%@page import="Model.News"%>
-<%@ page language="java" import="java.util.*, bean.New" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" import="java.util.*, bean.New" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -49,7 +48,6 @@
 		<!-- navbar -->
 		<div class="wrapper bg-white b-b">
 			<ul id="type" class="nav nav-pills nav-sm">
-				<li class="active"><a href="./">所有新闻</a></li>
 			</ul>
 		</div>
 		<!-- / navbar -->
@@ -57,9 +55,9 @@
 		<div class="col-sm-9" style="top: 20px;width: 100%;">
 			<div class="blog-post">
 				<jsp:useBean id="newbean" class="Model.News" />
-				<%!int pagenum;
-	int type;%>
 				<%
+					int pagenum, type;
+					//获取分页
 					String s_page = (String) request.getParameter("page");
 					if (s_page != null)
 						pagenum = Integer.parseInt(s_page);
@@ -68,11 +66,13 @@
 					if (pagenum <= 0) {
 						pagenum = 1;
 					}
+					//获取分类
 					String s_type = (String) request.getParameter("Type");
 					if (s_type != null)
 						type = Integer.parseInt(s_type);
 					else
 						type = -1;
+					//检索输出
 					List<New> list = newbean.AllNewsPage(pagenum, type);
 					request.setAttribute("list", list);
 				%>
@@ -113,8 +113,15 @@
 		function initTypeList() {
 			$.get("./getType", null, function(res) {
 				var list = res.List;
+				if(<%=type%>==-1)
+				    $('#type').append("<li class=\"active\"><a href=\"./\">所有新闻</a></li>")
+				else
+				    $('#type').append("<li><a href=\"./\">所有新闻</a></li>")
 				for (i = 0; i < list.length; i++) {
-					$('#type').append("<li class=\"active\"><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
+					if(<%=type%>==i)
+					    $('#type').append("<li class=\"active\"><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
+					else
+					    $('#type').append("<li><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
 				}
 			});
 		}

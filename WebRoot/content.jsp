@@ -1,5 +1,4 @@
 <%@ page language="java" import="java.util.*,bean.New" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="zh-cn">
 
@@ -48,7 +47,7 @@
 		<!-- navbar -->
 		<div class="wrapper bg-white b-b">
 			<ul id="type" class="nav nav-pills nav-sm">
-				<li class="active"><a href="./">所有新闻</a></li>
+				<li><a href="./">所有新闻</a></li>
 			</ul>
 		</div>
 		<!-- / navbar -->
@@ -61,32 +60,32 @@
 						<jsp:useBean id="nesmodel" class="Model.News" />
 						<%
 							String pagenum = (String) request.getParameter("id");
+							New OneNew = new New();
 							if (pagenum != null) {
 								int id = Integer.parseInt(pagenum);
-								New OneNew = nesmodel.getOneNews(id);
+								OneNew = nesmodel.getOneNews(id);
 						%>
 						<h2 class="m-t-none" style="text-align: center;">
-							<%
-								out.println(OneNew.getTitle());
-							%>
+							<%=OneNew.getTitle()%>
 						</h2>
 						<div>
-							<%
-								out.println(OneNew.getContent());
-							%>
+							<%=OneNew.getContent()%>
 						</div>
 						<div class="line line-lg b-b b-light"></div>
 						<div class="text-muted">
-							<i class="fa fa-user text-muted"></i> by <a href="" class="m-r-sm"> <%
- 	out.println(OneNew.getAuthor());
- %></a> <i class="fa fa-clock-o text-muted"></i>
+							<i class="fa fa-user text-muted"></i> by <a href="" class="m-r-sm"> <%=OneNew.getAuthor()%></a> <i
+								class="fa fa-clock-o text-muted"></i>
+							<%=OneNew.getPosttime()%> <%=OneNew.getType()%>
 							<%
-								out.println(OneNew.getPosttime());
+								if (username != null) {
 							%>
 							<button type="reset" class="btn btn-sm btn-info" style="float: right;" onclick="return Delete();">删除</button>
-							
-							<button type="reset" class="btn btn-sm btn-info" style="float: right;margin-right: 10px;">编辑</button>
-													</div>
+							<a href="./editNews.jsp?newid=<%=OneNew.getId()%>" class="btn btn-sm btn-info"
+								style="float: right;margin-right: 10px;">编辑</a>
+							<%
+								}
+							%>
+						</div>
 						<%
 							} else {
 								out.println("找不到该新闻，可能已被删除");
@@ -110,7 +109,10 @@
 			$.get("./getType", null, function(res) {
 				var list = res.List;
 				for (i = 0; i < list.length; i++) {
-					$('#type').append("<li class=\"active\"><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
+					if(list[i] == '<%=OneNew.getType()%>')
+					    $('#type').append("<li class=\"active\"><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
+					else
+					    $('#type').append("<li><a href=\"./?Type=" + i + "\">" + list[i] + "</a></li>");
 				}
 			});
 		}
