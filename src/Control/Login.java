@@ -57,6 +57,8 @@ public class Login extends HttpServlet {
 				HttpSession session = request.getSession();
 				//不管存不存在，创建session
 				session.setAttribute("username", username);
+			}else{
+				jsonObj.put(jsonKey, "error");
 			}
 		}
 		else
